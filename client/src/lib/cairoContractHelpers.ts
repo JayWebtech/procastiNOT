@@ -8,23 +8,6 @@
 import { prepareChallengeForContract } from './timeUtils';
 
 /**
- * Cairo Contract Challenge Data Structure
- * This matches your Cairo contract's Challenge struct
- */
-export interface CairoChallenge {
-  id: u64;
-  task: ByteArray;
-  acp: ContractAddress;
-  staker: ContractAddress;
-  stake_amount: u256;
-  status: ChallengeStatus;
-  created_at: u64;
-  time_limit: u64; // This is what we need for comparison
-  acp_decision_at: u64;
-  dispute_raised_at: u64;
-}
-
-/**
  * Prepare challenge data for Cairo contract deployment
  * @param frontendData - Data from your frontend form
  * @returns Data formatted for Cairo contract
