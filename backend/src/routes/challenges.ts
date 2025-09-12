@@ -100,38 +100,58 @@ router.post('/', async (req, res) => {
     // Create challenge in database
     const challenge = await ChallengeModel.create(challengeData);
 
-    // Send email notification to ACP
-    try {
-      const emailSent = await emailService.sendEmail({
-        to: challenge.accountability_partner_email,
-        subject: `🎯 New Challenge Assignment - ${challenge.task_description.substring(0, 50)}...`,
-        html: emailService.generateACPNotificationTemplate(challenge)
-      });
+    // Send email notification to ACP (non-blocking)
+    // Don't await this - let it run in the background
+    setImmediate(async () => {
+      try {
+        const emailSent = await emailService.sendEmail({
+          to: challenge.accountability_partner_email,
+          subject: `🎯 New Challenge Assignment - ${challenge.task_description.substring(0, 50)}...`,
+          html: emailService.generateACPNotificationTemplate(challenge)
+        });
 
-      // Log email notification
-      await query(`
-        INSERT INTO email_notifications (challenge_id, recipient_email, notification_type, subject, body, status)
-        VALUES ($1, $2, $3, $4, $5, $6)
-      `, [
-        challenge.id,
-        challenge.accountability_partner_email,
-        'acp_notification',
-        `🎯 New Challenge Assignment - ${challenge.task_description.substring(0, 50)}...`,
-        emailService.generateACPNotificationTemplate(challenge),
-        emailSent ? 'sent' : 'failed'
-      ]);
+        // Log email notification
+        await query(`
+          INSERT INTO email_notifications (challenge_id, recipient_email, notification_type, subject, body, status)
+          VALUES ($1, $2, $3, $4, $5, $6)
+        `, [
+          challenge.id,
+          challenge.accountability_partner_email,
+          'acp_notification',
+          `🎯 New Challenge Assignment - ${challenge.task_description.substring(0, 50)}...`,
+          emailService.generateACPNotificationTemplate(challenge),
+          emailSent ? 'sent' : 'failed'
+        ]);
 
-      // Schedule proof reminder
-      const reminderTime = new Date(challenge.deadline_at.getTime() - 24 * 60 * 60 * 1000); // 24 hours before deadline
-      await query(`
-        INSERT INTO proof_reminders (challenge_id, scheduled_for, reminder_type)
-        VALUES ($1, $2, $3)
-      `, [challenge.id, reminderTime, 'proof_reminder']);
+        // Schedule proof reminder
+        const reminderTime = new Date(challenge.deadline_at.getTime() - 24 * 60 * 60 * 1000); // 24 hours before deadline
+        await query(`
+          INSERT INTO proof_reminders (challenge_id, scheduled_for, reminder_type)
+          VALUES ($1, $2, $3)
+        `, [challenge.id, reminderTime, 'proof_reminder']);
 
-    } catch (emailError) {
-      console.error('Email notification failed:', emailError);
-      // Don't fail the challenge creation if email fails
-    }
+        console.log(`✅ Email notification sent for challenge ${challenge.id}`);
+      } catch (emailError) {
+        console.error('Email notification failed:', emailError);
+        // Try to log the failure in database
+        try {
+          await query(`
+            INSERT INTO email_notifications (challenge_id, recipient_email, notification_type, subject, body, status, error_message)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+          `, [
+            challenge.id,
+            challenge.accountability_partner_email,
+            'acp_notification',
+            `🎯 New Challenge Assignment - ${challenge.task_description.substring(0, 50)}...`,
+            emailService.generateACPNotificationTemplate(challenge),
+            'failed',
+            (emailError as Error)?.message || 'Unknown error'
+          ]);
+        } catch (dbError) {
+          console.error('Failed to log email error:', dbError);
+        }
+      }
+    });
 
     return res.status(201).json({
       success: true,

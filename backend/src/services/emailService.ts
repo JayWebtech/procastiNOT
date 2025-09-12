@@ -11,7 +11,7 @@ interface EmailOptions {
 }
 
 class EmailService {
-  private transporter: nodemailer.Transporter;
+  private transporter: nodemailer.Transporter | null = null;
 
   constructor() {
     // Use Resend if available, otherwise fall back to SMTP
@@ -24,19 +24,27 @@ class EmailService {
           user: 'resend',
           pass: process.env.RESEND_API_KEY,
         },
+        connectionTimeout: 10000, // 10 seconds
+        greetingTimeout: 10000,
+        socketTimeout: 10000,
       });
       console.log('📧 Using Resend email service');
-    } else {
+    } else if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
       this.transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        host: process.env.SMTP_HOST,
         port: parseInt(process.env.SMTP_PORT || '587'),
         secure: false, // true for 465, false for other ports
         auth: {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS,
         },
+        connectionTimeout: 10000, // 10 seconds
+        greetingTimeout: 10000,
+        socketTimeout: 10000,
       });
       console.log('📧 Using SMTP email service');
+    } else {
+      console.warn('⚠️ No email service configured - emails will be skipped');
     }
 
     // DISABLED: Email verification causing startup timeouts
@@ -47,6 +55,10 @@ class EmailService {
 
   private async verifyConnection(): Promise<void> {
     try {
+      if (!this.transporter) {
+        throw new Error('Transporter not initialized');
+      }
+      
       // Add timeout to prevent hanging
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Verification timeout')), 5000);
@@ -65,23 +77,51 @@ class EmailService {
 
   async sendEmail(options: EmailOptions): Promise<boolean> {
     try {
+      // Check if email service is properly configured
+      if (!this.isConfigured() || !this.transporter) {
+        console.warn('⚠️ Email service not configured, skipping email send');
+        return false;
+      }
+
       const mailOptions = {
         from: process.env.RESEND_API_KEY 
           ? `"${process.env.FROM_NAME || 'ProcastiNot'}" <onboarding@resend.dev>`
-          : `"${process.env.FROM_NAME || 'ProcastiNot'}" <${process.env.FROM_EMAIL}>`,
+          : `"${process.env.FROM_NAME || 'ProcastiNot'}" <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
         to: options.to,
         subject: options.subject,
         html: options.html,
         text: options.text || this.stripHtml(options.html),
       };
 
-      const info = await this.transporter.sendMail(mailOptions);
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Email sending timeout after 10 seconds')), 10000);
+      });
+
+      const emailPromise = this.transporter.sendMail(mailOptions);
+
+      const info = await Promise.race([emailPromise, timeoutPromise]);
       console.log('✅ Email sent:', info.messageId);
       return true;
     } catch (error) {
       console.error('❌ Email sending failed:', error);
       return false;
     }
+  }
+
+  private isConfigured(): boolean {
+    if (process.env.RESEND_API_KEY) {
+      console.log('📧 Email configured with Resend API');
+      return true;
+    }
+    
+    if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+      console.log('📧 Email configured with SMTP');
+      return true;
+    }
+    
+    console.log('⚠️ Email not configured - missing required environment variables');
+    return false;
   }
 
   private stripHtml(html: string): string {
