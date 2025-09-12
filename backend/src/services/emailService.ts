@@ -39,10 +39,10 @@ class EmailService {
       console.log('📧 Using SMTP email service');
     }
 
-    // Verify connection configuration (non-blocking)
-    this.verifyConnection().catch(() => {
-      // Ignore verification errors - don't block startup
-    });
+    // DISABLED: Email verification causing startup timeouts
+    // this.verifyConnection().catch(() => {
+    //   // Ignore verification errors - don't block startup
+    // });
   }
 
   private async verifyConnection(): Promise<void> {
