@@ -47,7 +47,7 @@ export default function Button({ className }: { className?: string }) {
     return (
       <button
         onClick={connectWallet}
-        className={`font-medium transition-colors rounded-full focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed btn-engraved px-6 py-3 text-base ${className}`}
+        className={`font-medium transition-colors rounded-full focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed btn-engraved px-6 py-3 text-sm ${className}`}
       >
         Connect wallet
       </button>
@@ -61,7 +61,7 @@ export default function Button({ className }: { className?: string }) {
       </div>
       <Link href="/dashboard">
         <button
-          className={`font-medium transition-colors rounded-full focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed btn-engraved px-6 py-3 text-base ${className}`}
+          className={`font-medium transition-colors rounded-full focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed btn-engraved px-6 py-3 text-sm ${className}`}
         >
           Dashboard
         </button>
