@@ -15,7 +15,7 @@ import { setupSwagger } from './config/swagger';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = parseInt(process.env.PORT || '3001');
 
 // Trust proxy for Railway deployment
 app.set('trust proxy', 1);
@@ -132,13 +132,19 @@ const startServer = async () => {
     // DISABLED: Scheduler causing email timeouts and crashes
     // schedulerService.start();
     
-    // Start HTTP server
-    app.listen(PORT, () => {
+    // Start HTTP server - bind to 0.0.0.0 for Railway
+    const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`🌐 Binding to 0.0.0.0:${PORT} for Railway`);
       console.log(`📊 Health check: http://localhost:${PORT}/health`);
       console.log(`🔗 API base URL: http://localhost:${PORT}/api`);
       console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
       console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    });
+
+    // Handle server errors
+    server.on('error', (error) => {
+      console.error('❌ Server error:', error);
     });
     
   } catch (error) {
