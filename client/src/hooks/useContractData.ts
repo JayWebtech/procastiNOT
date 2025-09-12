@@ -35,13 +35,6 @@ export interface Case {
   total_votes: number;
 }
 
-// Cache for challenge data to avoid refetching
-const challengeCache = new Map<string, { 
-  challenges: Challenge[], 
-  timestamp: number 
-}>();
-const CACHE_DURATION = 30000; // 30 seconds cache
-
 export function useContractData() {
   const { account, address, isConnected } = useAccount();
   const { provider } = useProvider();
@@ -52,12 +45,12 @@ export function useContractData() {
   const { chain} = useNetwork();
   const [isMainnet, setIsMainnet] = useState(false);
   const toast = useToast();
+  const CONTRACT_ADDRESS = getContractAddress(isMainnet);
 
   const { contract } = useContract({
     abi: MY_CONTRACT_ABI as any,
-    address: "0x071f6e98eaa176c0f939b948430cfec8036d6127cf3e0b6684fc5879b89bf578" as `0x${string}`,
+    address: CONTRACT_ADDRESS as `0x${string}`,
   });
-
 
   // Fetch user's challenge from blockchain
   const fetchUserChallenge = async (useCache = true) => {

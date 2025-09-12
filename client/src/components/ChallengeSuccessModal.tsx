@@ -53,8 +53,8 @@ Join me in staying accountable! #ProcastiNOT #Accountability #Blockchain`;
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900 border border-purple-500/30 rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-xl z-50 flex items-center justify-center p-4">
+      <div className="border border-purple-400/20 rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -65,7 +65,7 @@ Join me in staying accountable! #ProcastiNOT #Accountability #Blockchain`;
 
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-20 h-20 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
             <Check className="h-10 w-10 text-white" />
           </div>
           <h2 className="text-3xl font-bold text-white mb-2">
@@ -77,40 +77,28 @@ Join me in staying accountable! #ProcastiNOT #Accountability #Blockchain`;
         </div>
 
         {/* Challenge Flyer */}
-        <div className="bg-gradient-to-br from-purple-600/20 via-blue-600/20 to-purple-600/20 border border-purple-400/30 rounded-2xl p-6 mb-6 relative overflow-hidden">
-          {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-0 w-32 h-32 bg-purple-400 rounded-full -translate-x-16 -translate-y-16"></div>
-            <div className="absolute bottom-0 right-0 w-24 h-24 bg-blue-400 rounded-full translate-x-12 translate-y-12"></div>
-            <div className="absolute top-1/2 left-1/2 w-16 h-16 bg-green-400 rounded-full -translate-x-8 -translate-y-8"></div>
-          </div>
+        <div className="mb-6 relative overflow-hidden">
+
 
           <div className="relative z-10">
-            {/* ProcastiNOT Logo/Brand */}
-            <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-                ProcastiNOT
-              </h3>
-              <p className="text-gray-300 text-sm">Accountability Challenge</p>
-            </div>
-
+            
             {/* Challenge Details */}
             <div className="space-y-4">
-              <div className="bg-black/30 rounded-xl p-4">
+              <div className="bg-black/30 rounded-xl p-4 border border-purple-400/20">
                 <h4 className="text-white font-semibold mb-2">📋 Challenge</h4>
                 <p className="text-gray-200 text-sm leading-relaxed">
                   {challengeData.task}
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-black/30 rounded-xl p-4">
+              <div className="grid grid-cols-2 gap-4 ">
+                <div className="bg-black/30 rounded-xl p-4 border border-purple-400/20">
                   <h4 className="text-white font-semibold mb-1">💰 Stake</h4>
                   <p className="text-green-400 font-bold">
                     {challengeData.stake_amount} STRK
                   </p>
                 </div>
-                <div className="bg-black/30 rounded-xl p-4">
+                <div className="bg-black/30 rounded-xl p-4 border border-purple-400/20">
                   <h4 className="text-white font-semibold mb-1">⏰ Duration</h4>
                   <p className="text-blue-400 font-bold">
                     {challengeData.duration}
@@ -118,7 +106,7 @@ Join me in staying accountable! #ProcastiNOT #Accountability #Blockchain`;
                 </div>
               </div>
 
-              <div className="bg-black/30 rounded-xl p-4">
+              <div className="bg-black/30 rounded-xl p-4 border border-purple-400/20">
                 <h4 className="text-white font-semibold mb-1">🆔 Challenge ID</h4>
                 <p className="text-purple-400 font-mono text-sm">
                   #{challengeData.id}
@@ -144,7 +132,7 @@ Join me in staying accountable! #ProcastiNOT #Accountability #Blockchain`;
             <Button
               onClick={handleTwitterShare}
               variant="primary"
-              className="flex-1 flex items-center justify-center gap-2 py-3"
+              className="flex-1 flex items-center justify-center text-xs gap-2 py-2"
             >
               <Twitter className="h-5 w-5" />
               Share on Twitter
@@ -152,7 +140,7 @@ Join me in staying accountable! #ProcastiNOT #Accountability #Blockchain`;
             <Button
               onClick={handleCopyLink}
               variant="outline"
-              className="flex items-center justify-center gap-2 px-4 py-3"
+              className="flex items-center justify-center text-xs gap-2 py-2"
             >
               {copied ? (
                 <Check className="h-5 w-5 text-green-400" />

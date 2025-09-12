@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAccount, useContract, useNetwork, useProvider } from "@starknet-react/core";
 import { useToast } from "@/hooks/useToast";
 import { MY_CONTRACT_ABI } from "@/lib/abi";
+import { getContractAddress } from "@/lib/token";
 
 // Type definitions for case data
 export interface Case {
@@ -37,10 +38,11 @@ export function useCasesData() {
   const { chain } = useNetwork();
   const [isMainnet, setIsMainnet] = useState(false);
   const toast = useToast();
+  const CONTRACT_ADDRESS = getContractAddress(isMainnet);
 
   const { contract } = useContract({
     abi: MY_CONTRACT_ABI as any,
-    address: "0x071f6e98eaa176c0f939b948430cfec8036d6127cf3e0b6684fc5879b89bf578" as `0x${string}`,
+    address: CONTRACT_ADDRESS as `0x${string}`,
   });
 
   // Format the raw blockchain data

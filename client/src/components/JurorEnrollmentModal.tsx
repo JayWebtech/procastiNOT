@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "./ui/Button";
 import Select from "./ui/Select";
 import { X, Loader2 } from "lucide-react";
-import { useAccount, useContract } from "@starknet-react/core";
+import { useAccount, useNetwork } from "@starknet-react/core";
 import { CallData } from "starknet";
-import { MY_CONTRACT_ABI } from "../lib/abi";
 import { useToast } from "../hooks/useToast";
 import { getContractAddress, getSupportedTokens } from "@/lib/token";
 
@@ -31,13 +30,10 @@ export default function JurorEnrollmentModal({
   const [isLoading, setIsLoading] = useState(false);
   const { account, address } = useAccount();
   const toast = useToast();
-  const SUPPORTED_TOKENS = getSupportedTokens(false);
-  const CONTRACT_ADDRESS = getContractAddress(false);
-
-  const { contract } = useContract({
-    abi: MY_CONTRACT_ABI as any,
-    address: "0x071f6e98eaa176c0f939b948430cfec8036d6127cf3e0b6684fc5879b89bf578" as `0x${string}`,
-  });
+  const [isMainnet, setIsMainnet] = useState(false);
+  const SUPPORTED_TOKENS = getSupportedTokens(isMainnet);
+  const CONTRACT_ADDRESS = getContractAddress(isMainnet);
+  const { chain } = useNetwork();
 
   if (!isOpen) return null;
 
@@ -137,6 +133,12 @@ export default function JurorEnrollmentModal({
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (chain) {
+      setIsMainnet(chain.network === "mainnet");
+    }
+  }, [chain]);
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-lg z-50 flex items-center justify-center p-4">

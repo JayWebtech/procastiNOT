@@ -135,13 +135,6 @@ router.post('/notify-acp', async (req, res) => {
               <p><strong>Proof Submitted:</strong> <a href="${challengeDetails.proofUrl}" target="_blank">View Proof on IPFS</a></p>
             </div>
             
-            <div style="text-align: center; margin: 20px 0;">
-              <a href="${process.env.FRONTEND_URL}/dashboard" 
-                 style="background-color: #a855f7; color: white; padding: 10px 20px; text-decoration: none; display: inline-block;">
-                Review Proof Now
-              </a>
-            </div>
-            
             <p style="color: #666; font-size: 14px;">
               Please review the submitted proof and make your decision to approve or reject it. 
               Your decision will determine whether the challenger gets their stake back plus rewards, or loses their stake to you.

@@ -11,20 +11,9 @@ import { useCasesData, Case } from "../../hooks/useCasesData";
 import JurorEnrollmentModal from "../../components/JurorEnrollmentModal";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { MY_CONTRACT_ABI } from "../../lib/abi";
 import { useToast } from "../../hooks/useToast";
 import { CallData } from "starknet";
-
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  stake: string;
-  duration: string;
-  status: "active" | "completed" | "failed" | "pending_proof";
-  deadline: string;
-  partner: string;
-}
+import { getContractAddress } from "@/lib/token";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<"tasks" | "cases" | "acp">(
@@ -37,6 +26,8 @@ export default function Dashboard() {
 
   const { address, account } = useAccount();
   const { chain } = useNetwork();
+  const [isMainnet, setIsMainnet] = useState(false);
+  const CONTRACT_ADDRESS = getContractAddress(isMainnet);
 
   // Use the contract data hook for user's challenges
   const {
@@ -65,12 +56,7 @@ export default function Dashboard() {
     initialLoad: casesInitialLoad,
   } = useCasesData();
 
-  // Contract hook for ACP actions
-  const { contract } = useContract({
-    abi: MY_CONTRACT_ABI as any,
-    address: "0x071f6e98eaa176c0f939b948430cfec8036d6127cf3e0b6684fc5879b89bf578" as `0x${string}`,
-  });
-
+  
   const toast = useToast();
 
   // Fetch ACP data only when ACP tab is selected for the first time
@@ -125,7 +111,7 @@ export default function Dashboard() {
       const calls = [
         {
           entrypoint: "acp_approve",
-          contractAddress: "0x071f6e98eaa176c0f939b948430cfec8036d6127cf3e0b6684fc5879b89bf578" as `0x${string}`,
+          contractAddress: CONTRACT_ADDRESS as `0x${string}`,
           calldata: CallData.compile([challengeId.toString()]),
         },
       ];
@@ -190,7 +176,7 @@ export default function Dashboard() {
       const calls = [
         {
           entrypoint: "acp_reject",
-          contractAddress: "0x071f6e98eaa176c0f939b948430cfec8036d6127cf3e0b6684fc5879b89bf578" as `0x${string}`,
+          contractAddress: CONTRACT_ADDRESS as `0x${string}`,
           calldata: CallData.compile([challengeId.toString()]),
         },
       ];
@@ -306,6 +292,12 @@ export default function Dashboard() {
         return status;
     }
   };
+
+  useEffect(() => {
+    if (chain) {
+      setIsMainnet(chain.network === "mainnet");
+    }
+  }, [chain]);
 
   return (
     <div className="min-h-screen bg-background text-foreground gradient-bg relative">

@@ -105,10 +105,7 @@ class EmailService {
           </div>
           
           <p><strong>Important:</strong> Wait for the challenger to submit proof before the deadline. Review evidence fairly and objectively.</p>
-          
-          <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/acp/review/${challenge.id}" class="button">
-            Review Challenges
-          </a>
+        
           
           <p>Thank you for being part of the ProcastiNot community!</p>
         </div>
@@ -165,10 +162,6 @@ class EmailService {
             <h3>Deadline</h3>
             <p>${new Date(challenge.deadline_at).toLocaleDateString()} at ${new Date(challenge.deadline_at).toLocaleTimeString()}</p>
           </div>
-          
-          <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/acp/review/${challenge.id}" class="button">
-            Submit Proof Now
-          </a>
           
           <p><strong>Remember:</strong> If you fail to submit proof before the deadline, your stake will be transferred to your accountability partner.</p>
         </div>

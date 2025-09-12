@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useAccount, useContract, useNetwork, useProvider } from "@starknet-react/core";
-import { getContractAddress } from "../lib/token";
+import { getContractAddress } from "@/lib/token";
 import { CallData } from "starknet";
 import { useToast } from "@/hooks/useToast";
 import { Challenge } from "./useContractData";
 import { MY_CONTRACT_ABI } from "@/lib/abi";
+
 
 // Cache for ACP challenge data to avoid refetching
 const acpChallengeCache = new Map<string, { 
@@ -27,10 +28,11 @@ export function useAcpData() {
   const [hasFetched, setHasFetched] = useState(false);
   const toast = useToast();
   const fetchInProgress = useRef(false);
+  const CONTRACT_ADDRESS = getContractAddress(isMainnet);
 
   const { contract } = useContract({
     abi: MY_CONTRACT_ABI as any,
-    address: "0x071f6e98eaa176c0f939b948430cfec8036d6127cf3e0b6684fc5879b89bf578" as `0x${string}`,
+    address: CONTRACT_ADDRESS as `0x${string}`,
   });
 
   // Format the raw blockchain data (same as useContractData)

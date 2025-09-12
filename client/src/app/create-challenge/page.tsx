@@ -47,7 +47,7 @@ export default function CreateChallengePage() {
   const { chain } = useNetwork();
   const toast = useToast();
   const router = useRouter();
-  const CONTRACT_ADDRESS = getContractAddress(isMainnet);
+  const CONTRACT_ADDRESS = lea(isMainnet);
   const SUPPORTED_TOKENS = getSupportedTokens(isMainnet);
 
   const durationOptions = [
@@ -642,7 +642,7 @@ export default function CreateChallengePage() {
             </div>
 
             {/* Right Column - Instructions */}
-            <div className="bg-gray-800/50 col-span-2 backdrop-blur-sm rounded-2xl space-y-4">
+            <div className="bg-gray-800/50 col-span-4 md:col-span-2 backdrop-blur-sm rounded-2xl space-y-4">
               {/* Wallet Connection Status */}
               {fieldErrors.wallet && (
                 <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
