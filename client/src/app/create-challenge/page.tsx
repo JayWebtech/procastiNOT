@@ -47,7 +47,7 @@ export default function CreateChallengePage() {
   const { chain } = useNetwork();
   const toast = useToast();
   const router = useRouter();
-  const CONTRACT_ADDRESS = lea(isMainnet);
+  const CONTRACT_ADDRESS = getContractAddress(isMainnet);
   const SUPPORTED_TOKENS = getSupportedTokens(isMainnet);
 
   const durationOptions = [
@@ -294,7 +294,7 @@ export default function CreateChallengePage() {
 
       // Wait for transaction confirmation
       const receipt = await account!.waitForTransaction(txHash);
-      console.log("📦 Receipt:", receipt.events);
+      console.log("📦 Receipt:", receipt);
 
       if (receipt?.statusReceipt === "success") {
         // Extract challenge_id from contract events
@@ -318,8 +318,11 @@ export default function CreateChallengePage() {
         // Normalize the target address once
         const normalizedContractAddress = normalizeAddress(CONTRACT_ADDRESS);
         
+        // Get events from the receipt - handle different receipt types
+        const events = 'events' in receipt ? receipt.events : [];
+        
         console.log("=== Logging all event addresses before filtering ===");
-        receipt.events.forEach((e: any, index: any) => {
+        events.forEach((e: any, index: any) => {
             const normalizedEventAddress = normalizeAddress(e.from_address);
             console.log(`Event ${index}:`, {
                 from_address: e.from_address,
@@ -330,7 +333,7 @@ export default function CreateChallengePage() {
             });
         });
         
-        const contractEvents = receipt.events.filter((e: any) => 
+        const contractEvents = events.filter((e: any) => 
             normalizeAddress(e.from_address) === normalizedContractAddress  // Use normalized target
         );
         
