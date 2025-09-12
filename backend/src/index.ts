@@ -129,8 +129,8 @@ const startServer = async () => {
     await query('SELECT 1');
     console.log('✅ Database connection successful');
     
-    // Start scheduler service
-    schedulerService.start();
+    // DISABLED: Scheduler causing email timeouts and crashes
+    // schedulerService.start();
     
     // Start HTTP server
     app.listen(PORT, () => {

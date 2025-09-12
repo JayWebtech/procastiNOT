@@ -39,13 +39,24 @@ class EmailService {
       console.log('📧 Using SMTP email service');
     }
 
-    // Verify connection configuration
-    this.verifyConnection();
+    // Verify connection configuration (non-blocking)
+    this.verifyConnection().catch(() => {
+      // Ignore verification errors - don't block startup
+    });
   }
 
   private async verifyConnection(): Promise<void> {
     try {
-      await this.transporter.verify();
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Verification timeout')), 5000);
+      });
+      
+      await Promise.race([
+        this.transporter.verify(),
+        timeoutPromise
+      ]);
+      
       console.log('✅ Email service ready');
     } catch (error) {
       console.error('❌ Email service configuration error:', error);
