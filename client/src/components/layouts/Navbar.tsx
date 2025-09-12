@@ -16,7 +16,10 @@ export default function Navbar({ type }: { type?: string }) {
         <div className="flex items-center">
           {/* Logo */}
           <div className="flex-1">
-            <Logo />
+            <Link href={"/"}>
+              {" "}
+              <Logo />
+            </Link>
           </div>
           {type !== "create-challenge" && (
             <nav className="hidden md:flex justify-center items-center gap-8 flex-1">
