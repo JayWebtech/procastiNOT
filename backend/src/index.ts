@@ -15,7 +15,7 @@ import { setupSwagger } from './config/swagger';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = parseInt(process.env.PORT || '3001');
 
 // Trust proxy for Railway deployment
 app.set('trust proxy', 1);
@@ -67,14 +67,16 @@ app.get('/health', async (req, res) => {
     // Test database connection
     await query('SELECT 1');
     
-    res.json({
+    res.status(200).json({
       success: true,
       message: 'API is healthy',
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV || 'development',
-      version: '1.0.0'
+      version: '1.0.0',
+      port: process.env.PORT || 3001
     });
   } catch (error) {
+    console.error('Health check failed:', error);
     res.status(503).json({
       success: false,
       message: 'Service unavailable',
@@ -133,12 +135,13 @@ const startServer = async () => {
     schedulerService.start();
     
     // Start HTTP server
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📊 Health check: http://localhost:${PORT}/health`);
       console.log(`🔗 API base URL: http://localhost:${PORT}/api`);
       console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
       console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🌐 Railway PORT: ${process.env.PORT}`);
     });
     
   } catch (error) {
