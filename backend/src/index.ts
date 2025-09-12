@@ -61,6 +61,15 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Compression middleware
 app.use(compression());
 
+// Simple root endpoint (no database required)
+app.get('/', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    service: 'ProcastiNot API',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Health check endpoint
 app.get('/health', async (req, res) => {
   try {
