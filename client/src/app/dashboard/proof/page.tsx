@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAccount, useNetwork } from '@starknet-react/core';
 import { Call, CallData, byteArray } from "starknet";
@@ -12,7 +12,7 @@ import { Loader2 } from "lucide-react";
 import { useToast } from "../../../hooks/useToast";
 import { getContractAddress } from "@/lib/token";
 
-export default function ProofSubmissionPage() {
+function ProofSubmissionContent() {
   const searchParams = useSearchParams();
   const challengeId = searchParams.get('challenge_id');
   const [isMainnet, setIsMainnet] = useState(true);
@@ -302,5 +302,20 @@ export default function ProofSubmissionPage() {
       
       <Footer />
     </div>
+  );
+}
+
+export default function ProofSubmissionPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background text-foreground gradient-bg relative flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="animate-spin h-8 w-8 mx-auto mb-4" />
+          <p className="text-gray-300">Loading...</p>
+        </div>
+      </div>
+    }>
+      <ProofSubmissionContent />
+    </Suspense>
   );
 }
