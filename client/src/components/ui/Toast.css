@@ -1,0 +1,120 @@
+/* Toast Animations */
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-out-right {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes progress-bar {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out;
+}
+
+.animate-slide-out-right {
+  animation: slide-out-right 0.3s ease-in;
+}
+
+.animate-progress-bar {
+  animation: progress-bar linear;
+  animation-fill-mode: forwards;
+}
+
+/* Toast Container Animations */
+@keyframes toast-container-enter {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.toast-container {
+  animation: toast-container-enter 0.2s ease-out;
+}
+
+/* Hover Effects */
+.toast-hover-lift {
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.toast-hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .toast-container {
+    right: 1rem;
+    left: 1rem;
+    width: auto;
+  }
+}
+
+/* Custom Toast Variants */
+.toast-success-glow {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+}
+
+.toast-error-glow {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+.toast-warning-glow {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+}
+
+.toast-info-glow {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+/* Ripple Effect */
+.toast-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.toast-ripple::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.toast-ripple:active::before {
+  width: 300px;
+  height: 300px;
+}
