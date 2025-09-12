@@ -333,7 +333,7 @@ export default function Dashboard() {
           <div className="flex space-x-1 bg-gray-800/50 backdrop-blur-sm border border-[#ffffff1a] rounded-xl p-2 mb-8">
             <button
               onClick={() => setActiveTab("tasks")}
-              className={`flex-1 py-2 px-3 lg:py-3 lg:px-4 rounded-lg text-xs lg:font-medium transition-colors ${
+              className={`flex-1 py-2 px-3 md:py-3 md:px-4 rounded-lg text-xs md:font-medium transition-colors ${
                 activeTab === "tasks"
                   ? "btn-engraved text-white"
                   : "text-gray-400 hover:text-white"
