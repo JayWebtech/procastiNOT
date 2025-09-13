@@ -27,9 +27,20 @@ export function Providers({ children }: ProvidersProps) {
   });
 
   const rpc = useCallback((chain: Chain) => {
+    // Use different RPC URLs based on the chain
+    if (chain.id === mainnet.id) {
+      return {
+        nodeUrl: 'https://starknet-mainnet.public.blastapi.io',
+      };
+    } else if (chain.id === sepolia.id) {
+      return {
+        nodeUrl: 'https://starknet-sepolia.public.blastapi.io',
+      };
+    }
+    
+    // Fallback to mainnet if chain is not recognized
     return {
-      nodeUrl: `https://starknet-mainnet.public.blastapi.io`,
-      //nodeUrl: `https://starknet-sepolia.public.blastapi.io`
+      nodeUrl: 'https://starknet-mainnet.public.blastapi.io',
     };
   }, []);
 
