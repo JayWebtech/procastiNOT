@@ -4,6 +4,7 @@ import { useState } from "react";
 import Navbar from "../../../components/layouts/Navbar";
 import Footer from "../../../components/layouts/Footer";
 import Button from "../../../components/ui/Button";
+import DisputeExplanationModal from "../../../components/DisputeExplanationModal";
 
 interface ProofSubmission {
   id: string;
@@ -21,6 +22,7 @@ export default function ACPReviewPage() {
   const [selectedProof, setSelectedProof] = useState<ProofSubmission | null>(null);
   const [reviewDecision, setReviewDecision] = useState<"approve" | "reject" | null>(null);
   const [reviewComment, setReviewComment] = useState("");
+  const [showDisputeModal, setShowDisputeModal] = useState(false);
 
   // Mock data - replace with actual data from your contract
   const pendingProofs: ProofSubmission[] = [
@@ -51,7 +53,17 @@ export default function ACPReviewPage() {
   const handleReview = (decision: "approve" | "reject") => {
     if (!selectedProof) return;
     
-    setReviewDecision(decision);
+    if (decision === "reject") {
+      // Show dispute explanation modal first
+      setShowDisputeModal(true);
+    } else {
+      setReviewDecision(decision);
+    }
+  };
+
+  const handleConfirmReject = () => {
+    setReviewDecision("reject");
+    setShowDisputeModal(false);
   };
 
   const handleSubmitReview = () => {
@@ -287,6 +299,19 @@ export default function ACPReviewPage() {
       </main>
       
       <Footer />
+
+      {/* Dispute Explanation Modal */}
+      {selectedProof && (
+        <DisputeExplanationModal
+          isOpen={showDisputeModal}
+          onClose={() => setShowDisputeModal(false)}
+          onConfirmReject={handleConfirmReject}
+          challengeData={{
+            task: selectedProof.title,
+            stake_amount: parseFloat(selectedProof.stake.split(' ')[0]) // Extract number from "10 STRK"
+          }}
+        />
+      )}
     </div>
   );
 }

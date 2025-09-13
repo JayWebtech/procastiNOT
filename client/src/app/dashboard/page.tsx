@@ -9,6 +9,7 @@ import { useContractData, Challenge } from "../../hooks/useContractData";
 import { useAcpData } from "../../hooks/useAcpData";
 import { useCasesData, Case } from "../../hooks/useCasesData";
 import JurorEnrollmentModal from "../../components/JurorEnrollmentModal";
+import DisputeExplanationModal from "../../components/DisputeExplanationModal";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "../../hooks/useToast";
@@ -23,6 +24,8 @@ export default function Dashboard() {
   const casesFetchedRef = useRef(false);
   const [showJurorModal, setShowJurorModal] = useState(false);
   const [selectedCase, setSelectedCase] = useState<Case | null>(null);
+  const [showDisputeModal, setShowDisputeModal] = useState(false);
+  const [challengeToReject, setChallengeToReject] = useState<Challenge | null>(null);
 
   const { address, account } = useAccount();
   const { chain } = useNetwork();
@@ -156,17 +159,29 @@ export default function Dashboard() {
     }
   };
 
-  // ACP reject function
-  const handleRejectProof = async (challengeId: number) => {
-    if (!account || !address) {
+  // Show dispute explanation modal before rejecting
+  const handleRejectProof = (challengeId: number) => {
+    // Find the challenge to reject
+    const challenge = acpChallenges.find(c => c.id === challengeId);
+    if (!challenge) return;
+    
+    setChallengeToReject(challenge);
+    setShowDisputeModal(true);
+  };
+
+  // Actual ACP reject function after confirmation
+  const handleConfirmRejectProof = async () => {
+    if (!challengeToReject || !account || !address) {
       toast.error({
         title: "Error",
-        message: "Wallet not connected"
+        message: "Wallet not connected or no challenge selected"
       });
       return;
     }
 
     try {
+      setShowDisputeModal(false);
+      
       toast.info({
         title: "Rejecting Proof",
         message: "Please confirm the transaction in your wallet..."
@@ -177,7 +192,7 @@ export default function Dashboard() {
         {
           entrypoint: "acp_reject",
           contractAddress: CONTRACT_ADDRESS as `0x${string}`,
-          calldata: CallData.compile([challengeId.toString()]),
+          calldata: CallData.compile([challengeToReject.id.toString()]),
         },
       ];
 
@@ -218,6 +233,8 @@ export default function Dashboard() {
         title: "Rejection Failed",
         message: error.message || "Failed to reject proof"
       });
+    } finally {
+      setChallengeToReject(null);
     }
   };
 
@@ -957,6 +974,22 @@ export default function Dashboard() {
           isOpen={showJurorModal}
           onClose={handleCloseJurorModal}
           caseData={selectedCase}
+        />
+      )}
+
+      {/* Dispute Explanation Modal */}
+      {challengeToReject && (
+        <DisputeExplanationModal
+          isOpen={showDisputeModal}
+          onClose={() => {
+            setShowDisputeModal(false);
+            setChallengeToReject(null);
+          }}
+          onConfirmReject={handleConfirmRejectProof}
+          challengeData={{
+            task: challengeToReject.task,
+            stake_amount: challengeToReject.stake_amount
+          }}
         />
       )}
     </div>
