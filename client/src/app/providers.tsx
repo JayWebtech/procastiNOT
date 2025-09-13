@@ -28,8 +28,8 @@ export function Providers({ children }: ProvidersProps) {
 
   const rpc = useCallback((chain: Chain) => {
     return {
-      //nodeUrl: `https://starknet-mainnet.public.blastapi.io`,
-      nodeUrl: `https://starknet-sepolia.public.blastapi.io`
+      nodeUrl: `https://starknet-mainnet.public.blastapi.io`,
+      //nodeUrl: `https://starknet-sepolia.public.blastapi.io`
     };
   }, []);
 

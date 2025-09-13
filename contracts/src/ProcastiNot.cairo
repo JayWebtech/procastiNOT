@@ -1,5 +1,5 @@
 #[starknet::contract]
-pub mod ProcastiNotV13 {
+pub mod ProcastiNotV1 {
     use core::num::traits::Zero;
     use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     use starknet::class_hash::ClassHash;
